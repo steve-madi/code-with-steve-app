@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { db } from '../../firebase';
+import { useNavigation } from '@react-navigation/native';
 
 const ExploreScreen = () => {
   const [name, setName] = useState('');
@@ -10,6 +11,7 @@ const ExploreScreen = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const navigation = useNavigation();
 
   const handleRegister = async () => {
     if (!name || !email || !password) {
@@ -39,7 +41,9 @@ const ExploreScreen = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.activeTab}>Sign Up</Text>
-        <Text style={styles.inactiveTab}>Login</Text>
+         <TouchableOpacity onPress={() =>navigation.navigate('login')}>
+  <Text style={styles.inactiveTab}>Sign In</Text>
+  </TouchableOpacity>
       </View>
 
       <Image

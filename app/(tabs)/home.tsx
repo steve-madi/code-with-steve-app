@@ -47,6 +47,30 @@ interface UploadItem {
     createdAt: any;
 }
 
+const formatDate = (timestamp: any) => {
+    if (!timestamp) return 'Unknown date';
+    
+    // If timestamp is a Firestore Timestamp object
+    if (timestamp.toDate) {
+        const date = timestamp.toDate();
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+    }
+    
+    // If timestamp is a string or number
+    const date = new Date(timestamp);
+    if (isNaN(date.getTime())) return 'Unknown date';
+    
+    return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    });
+};
+
 const HomeScreen = () => {
     const route = useRoute<HomeScreenRouteProp>();
     const navigation = useNavigation<HomeScreenNavigationProp>();
@@ -321,7 +345,10 @@ const HomeScreen = () => {
                                             </View>
                                         )}
                                         
-                                        <Text style={styles.videoTitle} numberOfLines={2}>{item.title}</Text>
+                                        <View style={styles.titleContainer}>
+                                            <Text style={styles.videoTitle} numberOfLines={2}>{item.title}</Text>
+                                            <Text style={styles.dateText}>Posted: {formatDate(item.createdAt)}</Text>
+                                        </View>
                                         
                                         <View style={styles.buttonContainer}>
                                             {videoFile && (
@@ -495,11 +522,18 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    titleContainer: {
+        padding: 15,
+    },
     videoTitle: {
         fontSize: width > 400 ? 16 : 14,
         fontWeight: '600',
-        padding: 15,
         color: '#2c3e50',
+    },
+    dateText: {
+        fontSize: 12,
+        color: '#7f8c8d',
+        marginTop: 5,
     },
     buttonContainer: {
         flexDirection: 'row',
@@ -552,38 +586,38 @@ const styles = StyleSheet.create({
         marginBottom: 30,
     },
     reloadButton: {
-      position: 'absolute',
-      bottom: 20,
-      alignSelf: 'center',
-      backgroundColor: 'white',
-      borderRadius: 20,
-      paddingVertical: 10,
-      paddingHorizontal: 20,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      ...Platform.select({
-          ios: {
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.2,
-              shadowRadius: 4,
-          },
-          android: {
-              elevation: 4,
-          },
-      }),
-  },
-  reloadContent: {
-      flexDirection: 'row',
-      alignItems: 'center',
-  },
-  reloadText: {
-      marginLeft: 8,
-      color: '#3366cc',
-      fontWeight: '600',
-      fontSize: 16,
-  },
+        position: 'absolute',
+        bottom: 20,
+        alignSelf: 'center',
+        backgroundColor: 'white',
+        borderRadius: 20,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        ...Platform.select({
+            ios: {
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.2,
+                shadowRadius: 4,
+            },
+            android: {
+                elevation: 4,
+            },
+        }),
+    },
+    reloadContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    reloadText: {
+        marginLeft: 8,
+        color: '#3366cc',
+        fontWeight: '600',
+        fontSize: 16,
+    },
 });
 
 export default HomeScreen;
